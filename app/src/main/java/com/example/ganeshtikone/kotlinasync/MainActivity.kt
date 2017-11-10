@@ -6,11 +6,13 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageView
 import android.view.View
 import android.widget.Toast
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), ImageDownloaderAsyncTask.OnImageDownloadListener {
 
     private var executor: ImageDownloaderAsyncTask? = null
+    private val imageUrl = "http://indiebookbutler.com/wp-content/uploads/2015/08/Free.jpg"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity(), ImageDownloaderAsyncTask.OnImageDownlo
     }
 
     override fun onPause() {
+        // Unregister listener once activity goes in background
         executor?.unregisterListener()
         executor = null
         super.onPause()
@@ -33,6 +36,19 @@ class MainActivity : AppCompatActivity(), ImageDownloaderAsyncTask.OnImageDownlo
         downloadButton.setOnClickListener(View.OnClickListener {
             startDownloadingImage()
         })
+
+        downloadWithPicassoButton.setOnClickListener(View.OnClickListener {
+            downloadWithPicasso()
+        })
+    }
+
+    /**
+     * Download Image using Picasso library
+     */
+    private fun downloadWithPicasso(){
+        Picasso.with(this)
+                .load(imageUrl)
+                .into(downloadImageView)
     }
 
     /**
@@ -40,7 +56,7 @@ class MainActivity : AppCompatActivity(), ImageDownloaderAsyncTask.OnImageDownlo
      * to download image
      */
     private fun startDownloadingImage() {
-        val imageUrl = "http://indiebookbutler.com/wp-content/uploads/2015/08/Free.jpg"
+
         executor =  ImageDownloaderAsyncTask(this)
         executor?.execute(imageUrl)
     }
